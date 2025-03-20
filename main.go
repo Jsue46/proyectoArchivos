@@ -1,9 +1,9 @@
 package main
 
 import (
-	"ejemplo/menu"
+	"Proyecto/Analyzer"
 )
 
 func main() {
-	menu.IniciarMenu()
+	Analyzer.AnalizadorEntrada()
 }
