@@ -16,42 +16,30 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 	fmt.Println("Type:", type_)
 	fmt.Println("Fit:", fit)
 
-	// Validar fit (bf/ff/wf)
 	if fit != "bf" && fit != "ff" && fit != "wf" {
 		fmt.Println("Error: Fit must be 'bf', 'ff', or 'wf'")
 		return
 	}
-
-	// Validar size > 0
 	if size <= 0 {
 		fmt.Println("Error: Size must be greater than 0")
 		return
 	}
-
-	// Validar unit (b/k/m)
 	if unit != "b" && unit != "k" && unit != "m" {
 		fmt.Println("Error: Unit must be 'b', 'k', or 'm'")
 		return
 	}
-
-	// Validar type (p/e/l)
 	if type_ != "p" && type_ != "e" && type_ != "l" {
 		fmt.Println("Error: Type must be 'p', 'e', or 'l'")
 		return
 	}
-
-	// Validar name
 	if name == "" {
 		fmt.Println("Error: Name is required")
 		return
 	}
-
-	// Validar path
 	if path == "" {
 		fmt.Println("Error: Path is required")
 		return
 	}
-
 	// Abrir el archivo binario en la ruta proporcionada
 	file, err := Utils.AbrirArchivo(path)
 	if err != nil {
@@ -60,7 +48,7 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 	}
 	defer file.Close()
 
-	// Leer el MBR (Master Boot Record)
+	// Leer el MBR
 	var TempMBR Partitions.MBR
 	if err := Utils.LeerArchivo(file, &TempMBR, 0); err != nil {
 		fmt.Println("Error: Could not read MBR from file")
@@ -83,31 +71,26 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 			}
 		}
 	}
-
 	// Validar que no se exceda el número máximo de particiones primarias y extendidas
 	if totalPartitions >= 4 {
 		fmt.Println("Error: No se pueden crear más de 4 particiones primarias o extendidas en total.")
 		return
 	}
-
 	// Validar que solo haya una partición extendida
 	if type_ == "e" && extendedCount > 0 {
 		fmt.Println("Error: Solo se permite una partición extendida por disco.")
 		return
 	}
-
-	// Validar que no se pueda crear una partición lógica sin una extendida
+	// Validar que no se creen particiones extendidas antes de las primarias
 	if type_ == "l" && extendedCount == 0 {
 		fmt.Println("Error: No se puede crear una partición lógica sin una partición extendida.")
 		return
 	}
-
 	// Validar que el tamaño de la nueva partición no exceda el tamaño del disco
 	if usedSpace+int32(size) > TempMBR.MbrTamanio {
 		fmt.Println("Error: No hay suficiente espacio en el disco para crear esta partición.")
 		return
 	}
-
 	// Determinar la posición de inicio de la nueva partición
 	var gap int32 = int32(binary.Size(TempMBR))
 	if totalPartitions > 0 {
@@ -129,7 +112,7 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 
 				if type_ == "e" {
 					// Inicializar el primer EBR en la partición extendida
-					ebrStart := gap // El primer EBR se coloca al inicio de la partición extendida
+					ebrStart := gap
 					ebr := Partitions.EBR{
 						PartFit:   fit[0],
 						PartStart: ebrStart,
@@ -144,7 +127,6 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 			}
 		}
 	}
-
 	// Manejar la creación de particiones lógicas dentro de una partición extendida
 	if type_ == "l" {
 		for i := 0; i < 4; i++ {
@@ -158,15 +140,12 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 					}
 					ebrPos = ebr.PartNext
 				}
-
 				// Calcular la posición de inicio de la nueva partición lógica
-				newEBRPos := ebr.PartStart + ebr.PartSize                    // El nuevo EBR se coloca después de la partición lógica anterior
-				logicalPartitionStart := newEBRPos + int32(binary.Size(ebr)) // El inicio de la partición lógica es justo después del EBR
-
+				newEBRPos := ebr.PartStart + ebr.PartSize
+				logicalPartitionStart := newEBRPos + int32(binary.Size(ebr))
 				// Ajustar el siguiente EBR
 				ebr.PartNext = newEBRPos
 				Utils.EscribirArchivo(file, ebr, int64(ebrPos))
-
 				// Crear y escribir el nuevo EBR
 				newEBR := Partitions.EBR{
 					PartFit:   fit[0],
@@ -176,15 +155,13 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 				}
 				copy(newEBR.PartName[:], name)
 				Utils.EscribirArchivo(file, newEBR, int64(newEBRPos))
-
 				// Imprimir el nuevo EBR creado
 				fmt.Println("Nuevo EBR creado:")
-				Partitions.PrintEBR(newEBR)
+				Partitions.ImrprimirEBR(newEBR)
 				break
 			}
 		}
 	}
-
 	// Sobrescribir el MBR
 	if err := Utils.EscribirArchivo(file, TempMBR, 0); err != nil {
 		fmt.Println("Error: Could not write MBR to file")

@@ -4,22 +4,23 @@ import (
 	"Proyecto/Partitions"
 	"Proyecto/Utils"
 	"fmt"
-<<<<<<< HEAD
 	"math/rand"
+	"os"
+	"strings"
 	"time"
 )
 
 func Mkdisk(size int, fit string, unit string, path string) {
 	fmt.Println("======INICIO MKDISK======")
-=======
-)
-
-func Mkdisk(size int, fit string, unit string, path string) {
-	fmt.Println("\033[1;36m╔══════════════════════════════════════════════════════════════════════╗")
-	fmt.Println("║                      \033[1;33mINICION  MKDISK\033[1;36m                              ║")
-	fmt.Println("╚══════════════════════════════════════════════════════════════════════╝\033[0m")
->>>>>>> origin/main
 	fmt.Printf("Size: %d\nFit: %s\nUnit: %s\nPath: %s\n", size, fit, unit, path)
+
+	// Valores por defecto para parámetros opcionales
+	if fit == "" {
+		fit = "ff"
+	}
+	if unit == "" {
+		unit = "m"
+	}
 
 	// Validaciones
 	if fit != "bf" && fit != "wf" && fit != "ff" {
@@ -35,9 +36,15 @@ func Mkdisk(size int, fit string, unit string, path string) {
 		return
 	}
 
+	// Crear directorios si no existen
+	if err := os.MkdirAll(path[:strings.LastIndex(path, "/")], os.ModePerm); err != nil {
+		fmt.Println("Error al crear directorios:", err.Error())
+		return
+	}
+
 	// Crear archivo
 	if err := Utils.CrearArchivo(path); err != nil {
-		fmt.Println("Error al crear archivo:", err)
+		fmt.Println("Error al crear archivo:", err.Error())
 		return
 	}
 
@@ -50,56 +57,42 @@ func Mkdisk(size int, fit string, unit string, path string) {
 	// Abrir archivo
 	file, err := Utils.AbrirArchivo(path)
 	if err != nil {
-		fmt.Println("Error al abrir archivo:", err)
+		fmt.Println("Error al abrir archivo:", err.Error())
 		return
 	}
-	defer file.Close() // Asegura el cierre del archivo al salir de la función
+	defer file.Close() // Cerrar archivo al salir de la función
 
-	// Escribir ceros en un solo bloque en lugar de un bucle
-	zeroBlock := make([]byte, sizeInBytes) // Crea un slice de bytes lleno de ceros
+	// Escribir ceros en el archivo (creando el espacio del disco)
+	zeroBlock := make([]byte, sizeInBytes) // Crea un bloque de ceros del tamaño del disco
 	if _, err := file.Write(zeroBlock); err != nil {
-		fmt.Println("Error al escribir en el archivo:", err)
+		fmt.Println("Error al escribir en el archivo:", err.Error())
 		return
 	}
 
-<<<<<<< HEAD
 	// Crear MBR
 	var nuevoMBR Partitions.MBR
 	nuevoMBR.MbrTamanio = int32(sizeInBytes)
-	nuevoMBR.MbrTamanio = rand.Int31()
+	nuevoMBR.MbrDskSignature = rand.Int31()
 	copy(nuevoMBR.DskFit[:], fit)
 
-	formattedDate := time.Now().Format("02/01/2006 15:04")
+	formattedDate := time.Now().Format("02/01/2016 15:04")
 	copy(nuevoMBR.MbrFechaCreacion[:], formattedDate)
 
 	// Escribir el MBR en el archivo
 	if err := Utils.EscribirArchivo(file, nuevoMBR, 0); err != nil {
-		fmt.Println("Error al escribir el MBR:", err)
+		fmt.Println("Error al escribir el MBR:", err.Error())
 		return
 	}
 
-=======
-	// Crear y escribir el MBR
-	if err := Partitions.CrearMBR(file, int32(sizeInBytes), fit[0]); err != nil {
-		fmt.Println("Error al crear el MBR:", err)
-		return
-	}
->>>>>>> origin/main
 	// Leer el MBR para verificar que se escribió correctamente
 	var tempMBR Partitions.MBR
 	if err := Utils.LeerArchivo(file, &tempMBR, 0); err != nil {
-		fmt.Println("Error al leer el MBR:", err)
+		fmt.Println("Error al leer el MBR:", err.Error())
 		return
 	}
 
 	// Imprimir el MBR leído
 	Partitions.ImprimirMBR(tempMBR)
 
-<<<<<<< HEAD
 	fmt.Println("======FIN MKDISK======")
-=======
-	fmt.Println("\033[1;36m╔══════════════════════════════════════════════════════════════════════╗")
-	fmt.Println("║                      \033[1;FIN  MKDISK\033[1;36m                              ║")
-	fmt.Println("╚══════════════════════════════════════════════════════════════════════╝\033[0m")
->>>>>>> origin/main
 }
