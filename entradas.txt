@@ -1,0 +1,19 @@
+mkdisk -size=10 -unit=k -path=/home/daaniieel/Desktop/Discos/DISCO.mia
+
+fdisk -type=P -unit=k -name=Part1 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+fdisk -type=P -unit=k -name=Part2 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+fdisk -type=P -unit=k -name=Part3 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+fdisk -type=E -unit=k -name=Part4 -size=6 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+fdisk -type=L -unit=k -name=Part5 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+fdisk -type=L -unit=k -name=Part6 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
+
+mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part1
+
+mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part4 mkfs -type=full -id=341a
+
+rmdisk -path="/home/daaniieel/Desktop/Discos/DISCO.mia"
