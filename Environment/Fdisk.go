@@ -54,6 +54,9 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 		fmt.Println("Error: Could not read MBR from file")
 		return
 	}
+	// Imprimir el objeto MBR
+	Partitions.ImprimirMBR(TempMBR)
+	fmt.Println("-------------")
 
 	// Validaciones de las particiones
 	var primaryCount, extendedCount, totalPartitions int

@@ -75,7 +75,7 @@ func Mkdisk(size int, fit string, unit string, path string) {
 	nuevoMBR.MbrDskSignature = rand.Int31()
 	copy(nuevoMBR.DskFit[:], fit)
 
-	formattedDate := time.Now().Format("02/01/2016 15:04")
+	formattedDate := time.Now().Format("02/01/2006 - 15:04")
 	copy(nuevoMBR.MbrFechaCreacion[:], formattedDate)
 
 	// Escribir el MBR en el archivo

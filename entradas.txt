@@ -1,5 +1,7 @@
+//Crear el Discos
 mkdisk -size=10 -unit=k -path=/home/daaniieel/Desktop/Discos/DISCO.mia
 
+//Crear las particiones al disco
 fdisk -type=P -unit=k -name=Part1 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
 
 fdisk -type=P -unit=k -name=Part2 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
@@ -12,8 +14,28 @@ fdisk -type=L -unit=k -name=Part5 -size=1 -path=/home/daaniieel/Desktop/Discos/d
 
 fdisk -type=L -unit=k -name=Part6 -size=1 -path=/home/daaniieel/Desktop/Discos/disco.mia
 
+//Montar una partcion al disco
 mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part1
+mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part2
+mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part3
 
-mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part4 mkfs -type=full -id=341a
+mount -path=/home/daaniieel/Desktop/Discos/disco.mia -name=Part4 
 
+//Aplicar formato al disco
+mkfs -type=full -id=061A   //Aqui pones el Id que te tira el mount.          y ese mismo id lo sigues usando para los de abajo, recorda que
+ mkfs -type=full -id=062A                       // ese id lo va generar por el No. de tu carnet.
+/Eliminar el disco
 rmdisk -path="/home/daaniieel/Desktop/Discos/DISCO.mia"
+
+//Iniciar Sesion
+Login -pass=123 -user=roca -id=061A
+Login -pass=123 -user=roca -id=062A
+Login -pass=123 -user=root -id=062A
+Login -pass=123 -user=root -id=061A
+
+//Cerrar Sesion
+Logout
+
+//Reportes
+rep -id=061A -path=/home/daaniieel/Desktop/reportes/reporte1.jpg -name=mbr
+rep -id=062A -path=/home/daaniieel/Desktop/reportes/reporte2.jpg -name=mbr

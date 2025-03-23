@@ -8,7 +8,6 @@ import (
 	"strings"
 )
 
-// Función para montar una Partición
 func Mount(path string, name string) {
 	file, err := Utils.AbrirArchivo(path)
 	if err != nil {
@@ -29,6 +28,7 @@ func Mount(path string, name string) {
 	var partition Partitions.Partition
 	var partitionIndex int
 
+	// Convertir el nombre a comparar a un arreglo de bytes de longitud fija
 	nameBytes := [16]byte{}
 	copy(nameBytes[:], []byte(name))
 
@@ -46,11 +46,15 @@ func Mount(path string, name string) {
 		return
 	}
 
+	// Verificar si la partición ya está montada
 	if partition.PartStatus[0] == '1' {
 		fmt.Println("Error: La partición ya está montada")
 		return
 	}
 
+	fmt.Printf("Partición encontrada: '%s' en posición %d\n", string(partition.PartName[:]), partitionIndex+1)
+
+	// Generar el ID de la partición utilizando la función `generateDiskID`
 	diskID := generateDiskID(path)
 	mountedPartitionsInDisk := mountedPartitions[diskID]
 	var letter byte
@@ -67,28 +71,37 @@ func Mount(path string, name string) {
 		letter = mountedPartitionsInDisk[0].MountID[len(mountedPartitionsInDisk[0].MountID)-1]
 	}
 
+	// Crear el ID de la partición utilizando el último par de dígitos de un carnet
 	carnet := "202203806"
 	lastTwoDigits := carnet[len(carnet)-2:]
 	partitionID := fmt.Sprintf("%s%d%c", lastTwoDigits, partitionIndex+1, letter)
 
 	partition.PartStatus[0] = '1'
 	copy(partition.PartID[:], partitionID)
-
 	TempMBR.MbrPartitions[partitionIndex] = partition
 
+	// Almacenar la posición inicial de la partición
 	mountedPartitions[diskID] = append(mountedPartitions[diskID], MountedPartition{
 		MountPath:   path,
 		MountName:   name,
 		MountID:     partitionID,
 		MountStatus: '1',
+		MountStart:  partition.PartStart,
 	})
 
+	// Escribir el MBR actualizado en el archivo
 	if err := Utils.EscribirArchivo(file, TempMBR, 0); err != nil {
 		fmt.Println("Error: No se pudo sobrescribir el MBR en el archivo")
 		return
 	}
 
+	// Imprimir el mensaje confirmando que la partición ha sido montada, junto con su ID.
 	fmt.Printf("Partición montada con ID: %s\n", partitionID)
+	fmt.Println("")
+	fmt.Println("MBR actualizado:")
+	Partitions.ImprimirMBR(TempMBR)
+	fmt.Println("")
+	ImprimirMountedPartitions()
 }
 
 func getLastDiskID() string {

@@ -4,36 +4,13 @@ import (
 	"fmt"
 )
 
-// Definición de la estructura de una partición
-type Partition struct {
-	PartStatus      [1]byte  // 1 byte
-	PartType        [1]byte  // 1 byte (P: Primaria, E: Extendida)
-	PartFit         [1]byte  // 1 byte (B: Best, F: First, W: Worst)
-	PartStart       int32    // 4 bytes
-	PartSize        int32    // 4 bytes
-	PartName        [16]byte // 16 bytes
-	PartCorrelative int32    // 4 bytes
-	PartID          [4]byte  // 4 bytes
-}
-
 // Definición de la estructura del MBR
 type MBR struct {
-	MbrTamanio       int32        // 4 bytes
-	MbrFechaCreacion [19]byte     // 19 bytes (fecha en formato string)
-	MbrDskSignature  int32        // 4 bytes (número único)
-	DskFit           [1]byte      // 1 byte (B: Best, F: First, W: Worst)
-	MbrPartitions    [4]Partition // 4 particiones de 36 bytes cada una
-}
-
-// Definición de la estructura de un EBR
-type EBR struct {
-	PartStatus byte     // 1 byte
-	PartFit    byte     // 1 byte
-	PartStart  int32    // 4 bytes
-	PartSize   int32    // 4 bytes
-	PartNext   int32    // 4 bytes
-	PartName   [16]byte // 16 bytes
-	PartMount  byte     // 1 byte
+	MbrTamanio       int32
+	MbrFechaCreacion [19]byte
+	MbrDskSignature  int32
+	DskFit           [1]byte
+	MbrPartitions    [4]Partition
 }
 
 // Función para imprimir un MBR
@@ -48,12 +25,34 @@ func ImprimirMBR(data MBR) {
 	}
 }
 
+// Definición de la estructura de una partición
+type Partition struct {
+	PartStatus      [1]byte
+	PartType        [1]byte
+	PartFit         [1]byte
+	PartStart       int32
+	PartSize        int32
+	PartName        [16]byte
+	PartCorrelative int32
+	PartID          [4]byte
+}
+
 // Función para imprimir una partición
 func ImprimirPartition(data Partition) {
 	fmt.Printf(
 		"Name: %s, type: %s, start: %d, size: %d, status: %s, id: %s\n",
 		string(data.PartName[:]), string(data.PartType[:]), data.PartStart, data.PartSize,
 		string(data.PartStatus[:]), string(data.PartID[:]))
+}
+
+// Definición de la estructura de un EBR
+type EBR struct {
+	PartMount byte
+	PartFit   byte
+	PartStart int32
+	PartSize  int32
+	PartNext  int32
+	PartName  [16]byte
 }
 
 // Función para imprimir un EBR
@@ -67,26 +66,25 @@ func ImrprimirEBR(data EBR) {
 		data.PartMount)
 }
 
-//Estructuras relacionadas a EXT2
-
+// Definición de la estructura del superbloque
 type Superblock struct {
-	S_filesystem_type   int32    // Guarda el número que identifica el sistema de archivos utilizado
-	S_inodes_count      int32    // Guarda el número total de inodos
-	S_blocks_count      int32    // Guarda el número total de bloques
-	S_free_blocks_count int32    // Contiene el número de bloques libres
-	S_free_inodes_count int32    // Contiene el número de inodos libres
-	S_mtime             [17]byte // Última fecha en el que el sistema fue montado
-	S_umtime            [17]byte // Última fecha en que el sistema fue desmontado
-	S_mnt_count         int32    // Indica cuantas veces se ha montado el sistema
-	S_magic             int32    // Valor que identifica al sistema de archivos, tendrá el valor 0xEF53
-	S_inode_size        int32    // Tamaño del inodo
-	S_block_size        int32    // Tamaño del bloque
-	S_fist_ino          int32    // Primer inodo libre (dirección del inodo)
-	S_first_blo         int32    // Primer bloque libre (dirección del inodo)
-	S_bm_inode_start    int32    // Guardará el inicio del bitmap de inodos
-	S_bm_block_start    int32    // Guardará el inicio del bitmap de bloques
-	S_inode_start       int32    // Guardará el inicio de la tabla de inodos
-	S_block_start       int32    // Guardará el inicio de la tabla de bloques
+	S_filesystem_type   int32
+	S_inodes_count      int32
+	S_blocks_count      int32
+	S_free_blocks_count int32
+	S_free_inodes_count int32
+	S_mtime             [17]byte
+	S_umtime            [17]byte
+	S_mnt_count         int32
+	S_magic             int32
+	S_inode_size        int32
+	S_block_size        int32
+	S_fist_ino          int32
+	S_first_blo         int32
+	S_bm_inode_start    int32
+	S_bm_block_start    int32
+	S_inode_start       int32
+	S_block_start       int32
 }
 
 func PrintSuperblock(sb Superblock) {
@@ -99,7 +97,7 @@ func PrintSuperblock(sb Superblock) {
 	fmt.Printf("S_mtime: %s\n", string(sb.S_mtime[:]))
 	fmt.Printf("S_umtime: %s\n", string(sb.S_umtime[:]))
 	fmt.Printf("S_mnt_count: %d\n", sb.S_mnt_count)
-	fmt.Printf("S_magic: 0x%X\n", sb.S_magic) // Usamos 0x%X para mostrarlo en formato hexadecimal
+	fmt.Printf("S_magic: 0x%X\n", sb.S_magic)
 	fmt.Printf("S_inode_size: %d\n", sb.S_inode_size)
 	fmt.Printf("S_block_size: %d\n", sb.S_block_size)
 	fmt.Printf("S_fist_ino: %d\n", sb.S_fist_ino)
@@ -165,8 +163,7 @@ func PrintFileblock(fileblock Fileblock) {
 }
 
 type Pointerblock struct {
-	B_pointers [16]int32 //Este campo es un apuntador al inodo asociado al archivo o carpeta.
-	//Cada apuntador es un int32 (4 bytes), lo que permite direccionar hasta 2^32 bloques
+	B_pointers [16]int32
 }
 
 func PrintPointerblock(pointerblock Pointerblock) {
