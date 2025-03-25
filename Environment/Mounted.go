@@ -1,3 +1,4 @@
+/*
 package Environment
 
 import "fmt"
@@ -6,6 +7,7 @@ import "fmt"
 var mountedPartitions = make(map[string][]MountedPartition)
 
 // Estructura para almacenar las particiones montadas
+<<<<<<< Updated upstream
 type MountedPartition struct {
 	MountPath   string
 	MountName   string
@@ -36,14 +38,72 @@ func ImprimirMountedPartitions() {
 			// Imprime los detalles de la partición.
 			fmt.Printf("  - Partición Name: %s, ID: %s, Path: %s, Status: %c, LoggedIn: %s\n",
 				partition.MountName, partition.MountID, partition.MountPath, partition.MountStatus, loginStatus)
-		}
+=======
+
+	type MountedPartition struct {
+		MountPath   string
+		MountName   string
+		MountID     string
+		MountStatus byte
 	}
-	fmt.Println("")
-}
+
+// Mapa para almacenar las particiones montadas
+//var mountedPartitions = make(map[string][]MountedPartition)
+
+// Funcion para Imprimir las particiones montadas
+
+	func ImprimirMountedPartitions() {
+		fmt.Println("Particiones montadas:")
+
+		if len(mountedPartitions) == 0 {
+			fmt.Println("No hay particiones montadas.")
+			return
+>>>>>>> Stashed changes
+		}
+
+		for diskID, partitions := range mountedPartitions {
+			fmt.Printf("Disco ID: %s\n", diskID)
+			for _, partition := range partitions {
+				fmt.Printf(" - Partición Name: %s, ID: %s, Path: %s, Status: %c\n",
+					partition.MountName, partition.MountID, partition.MountPath, partition.MountStatus)
+			}
+		}
+		fmt.Println("")
+	}
 
 // Función para obtener las particiones montadas
-func GetMountedPartitions() map[string][]MountedPartition {
-	return mountedPartitions
+
+	func GetMountedPartitions() map[string][]MountedPartition {
+		return mountedPartitions
+	}
+*/
+package Environment
+
+import (
+	"fmt"
+	"strings"
+)
+
+func ListMountedPartitions() string {
+	mountMutex.Lock()
+	defer mountMutex.Unlock()
+
+	if len(mountedPartitions) == 0 {
+		return "no hay particiones montadas"
+	}
+
+	var builder strings.Builder
+	builder.WriteString("=== LISTADO DE PARTICIONES MONTADAS ===\n")
+
+	for diskPath, partitions := range mountedPartitions {
+		builder.WriteString(fmt.Sprintf("Disco: %s\n", diskPath))
+		for _, part := range partitions {
+			builder.WriteString(fmt.Sprintf("  ID: %s, Nombre: %s\n",
+				part.MountID, part.MountName))
+		}
+	}
+
+	return builder.String()
 }
 
 // Función para marcar una partición con inicio de sesión
