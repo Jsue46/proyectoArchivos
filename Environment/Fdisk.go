@@ -8,13 +8,13 @@ import (
 )
 
 func Fdisk(size int, path string, name string, unit string, type_ string, fit string) {
-	fmt.Println("======Start FDISK======")
-	fmt.Println("Size:", size)
-	fmt.Println("Path:", path)
-	fmt.Println("Name:", name)
-	fmt.Println("Unit:", unit)
-	fmt.Println("Type:", type_)
-	fmt.Println("Fit:", fit)
+	fmt.Println("╔═════════════════════ INICIO  FDISK  ═════════════════════════╗")
+	fmt.Println("  Size:", size)
+	fmt.Println("  Path:", path)
+	fmt.Println("  Name:", name)
+	fmt.Println("  Unit:", unit)
+	fmt.Println("  Type:", type_)
+	fmt.Println("  Fit:", fit)
 
 	if fit != "bf" && fit != "ff" && fit != "wf" {
 		fmt.Println("Error: Fit must be 'bf', 'ff', or 'wf'")
@@ -56,7 +56,7 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 	}
 	// Imprimir el objeto MBR
 	Partitions.ImprimirMBR(TempMBR)
-	fmt.Println("-------------")
+	fmt.Println("─────────────────────────────────────────────────────────────────")
 
 	// Validaciones de las particiones
 	var primaryCount, extendedCount, totalPartitions int
@@ -104,7 +104,6 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 	for i := 0; i < 4; i++ {
 		if TempMBR.MbrPartitions[i].PartSize == 0 {
 			if type_ == "p" || type_ == "e" {
-				// Crear partición primaria o extendida
 				TempMBR.MbrPartitions[i].PartSize = int32(size)
 				TempMBR.MbrPartitions[i].PartStart = gap
 				copy(TempMBR.MbrPartitions[i].PartName[:], name)
@@ -114,7 +113,6 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 				TempMBR.MbrPartitions[i].PartCorrelative = int32(totalPartitions + 1)
 
 				if type_ == "e" {
-					// Inicializar el primer EBR en la partición extendida
 					ebrStart := gap
 					ebr := Partitions.EBR{
 						PartFit:   fit[0],
@@ -146,7 +144,6 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 				// Calcular la posición de inicio de la nueva partición lógica
 				newEBRPos := ebr.PartStart + ebr.PartSize
 				logicalPartitionStart := newEBRPos + int32(binary.Size(ebr))
-				// Ajustar el siguiente EBR
 				ebr.PartNext = newEBRPos
 				Utils.EscribirArchivo(file, ebr, int64(ebrPos))
 				// Crear y escribir el nuevo EBR
@@ -180,6 +177,5 @@ func Fdisk(size int, path string, name string, unit string, type_ string, fit st
 
 	// Imprimir el objeto MBR actualizado
 	Partitions.ImprimirMBR(TempMBR2)
-
-	fmt.Println("======FIN FDISK======")
+	fmt.Println("╚═════════════════════   FIN   MKDISK   ═════════════════════════╝")
 }

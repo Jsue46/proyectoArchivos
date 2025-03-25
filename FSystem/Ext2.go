@@ -11,12 +11,12 @@ import (
 
 // Función auxiliar para crear el sistema de archivos EXT2
 func create_ext2(n int32, partition Partitions.Partition, newSuperblock Partitions.Superblock, date string, file *os.File) {
-	fmt.Println("======Start CREATE EXT2======")
-	fmt.Println("INODOS:", n)
+	fmt.Println(" ═════════════════════  CREANDO EXT2 ══════════════════════════ ")
+	fmt.Println("  INODOS:", n)
 
 	// Imprimir el Superblock calculado
 	Partitions.PrintSuperblock(newSuperblock)
-	fmt.Println("Date:", date)
+	fmt.Println("  Date:", date)
 
 	// Escribir los bitmaps de inodos y bloques
 	for i := int32(0); i < n; i++ {
@@ -59,7 +59,7 @@ func create_ext2(n int32, partition Partitions.Partition, newSuperblock Partitio
 	}
 
 	// Leer e imprimir los inodos después de formatear
-	fmt.Println("====== Imprimiendo Inodos ======")
+	fmt.Println(" ══════════════════  IMPRIMIENDO INODOS  ══════════════════════ ")
 	for i := int32(0); i < n; i++ {
 		var inode Partitions.Inode
 		offset := int64(newSuperblock.S_inode_start + i*int32(binary.Size(Partitions.Inode{})))
@@ -71,7 +71,7 @@ func create_ext2(n int32, partition Partitions.Partition, newSuperblock Partitio
 	}
 
 	// Leer e imprimir los Folderblocks y Fileblocks
-	fmt.Println("====== Imprimiendo Folderblocks y Fileblocks ======")
+	fmt.Println(" ══════════════  FOLDERBLOCKS Y FILEBLOCKS  ═══════════════════ ")
 
 	// Imprimir Folderblocks
 	for i := int32(0); i < 1; i++ {
@@ -97,8 +97,7 @@ func create_ext2(n int32, partition Partitions.Partition, newSuperblock Partitio
 
 	// Imprimir el Superblock final
 	Partitions.PrintSuperblock(newSuperblock)
-
-	fmt.Println("======End CREATE EXT2======")
+	fmt.Println(" ═══════════════════ FINALIZANDO EXT2  ════════════════════════ ")
 }
 
 // Función auxiliar para inicializar inodos y bloques
@@ -134,25 +133,25 @@ func createRootAndUsersFile(newSuperblock Partitions.Superblock, date string, fi
 	initInode(&Inode1, date)
 
 	// Asigna los bloques correspondientes a los inodos
-	Inode0.I_block[0] = 0 // El primer inodo representa la carpeta raíz
-	Inode1.I_block[0] = 1 // El segundo inodo representa el archivo users.txt
+	Inode0.I_block[0] = 0
+	Inode1.I_block[0] = 1
 
-	// Contenido del archivo users.txt (usuarios iniciales)
-	data := "1,G,root\n1,U,root,root,123\n" // Define un grupo y un usuario root
-	actualSize := int32(len(data))          // Obtiene el tamaño real del contenido
-	Inode1.I_size = actualSize              // Asigna el tamaño real al inodo del archivo
+	// Contenido del archivo users.txt
+	data := "  1,G,root\n  1,U,root,root,123\n"
+	actualSize := int32(len(data))
+	Inode1.I_size = actualSize
 
 	// Crea un bloque de archivo y copia el contenido en él
 	var Fileblock1 Partitions.Fileblock
-	copy(Fileblock1.B_content[:], data) // Copia segura de datos a Fileblock
+	copy(Fileblock1.B_content[:], data)
 
 	// Crea un bloque de carpeta (raíz) y asigna las entradas iniciales
 	var Folderblock0 Partitions.Folderblock
-	Folderblock0.B_content[0].B_inodo = 0 // Referencia al propio directorio
+	Folderblock0.B_content[0].B_inodo = 0
 	copy(Folderblock0.B_content[0].B_name[:], ".")
-	Folderblock0.B_content[1].B_inodo = 0 // Referencia al directorio padre (en este caso, él mismo)
+	Folderblock0.B_content[1].B_inodo = 0
 	copy(Folderblock0.B_content[1].B_name[:], "..")
-	Folderblock0.B_content[2].B_inodo = 1 // Apunta al archivo users.txt
+	Folderblock0.B_content[2].B_inodo = 1
 	copy(Folderblock0.B_content[2].B_name[:], "users.txt")
 
 	// Escribe los inodos y bloques en las posiciones correctas en el archivo del sistema
@@ -174,19 +173,19 @@ func createRootAndUsersFile(newSuperblock Partitions.Superblock, date string, fi
 
 // SearchInodeByPath busca un archivo o directorio en el sistema de archivos EXT2.
 func SearchInodeByPath(steps []string, inode Partitions.Inode, file *os.File, superblock Partitions.Superblock) int32 {
-	fmt.Println("======Start BUSQUEDA INODO POR PATH======")
+	fmt.Println(" ══════════════   BUSCANDO INODO POR PATH  ════════════════════ ")
 
-	index := int32(0) // Contador de bloques procesados en el inodo actual
+	index := int32(0)
 
 	// Extrae el primer elemento del path y elimina espacios en blanco
 	SearchedName := strings.Replace(steps[0], " ", "", -1)
 
-	fmt.Println("========== SearchedName:", SearchedName)
+	fmt.Println(" ══════════════  SearchedName:", SearchedName)
 
 	// Iterar sobre los bloques del inodo
 	for _, block := range inode.I_block {
-		if block != -1 { // Si el bloque es válido (no está vacío)
-			if index < 13 { // Manejo de bloques directos (0-12)
+		if block != -1 {
+			if index < 13 {
 				var crrFolderblock Partitions.Folderblock
 
 				// Leer el bloque de carpeta desde el archivo binario
@@ -196,17 +195,16 @@ func SearchInodeByPath(steps []string, inode Partitions.Inode, file *os.File, su
 
 				// Buscar el archivo/directorio dentro del bloque de carpeta
 				for _, folder := range crrFolderblock.B_content {
-					fmt.Println("Folder === Name:", string(folder.B_name[:]), "B_inodo", folder.B_inodo)
+					fmt.Println(" ═══ Folder ═══ Name:", string(folder.B_name[:]), "B_inodo", folder.B_inodo)
 
-					// Si el nombre del archivo o directorio coincide
 					if strings.Contains(string(folder.B_name[:]), SearchedName) {
-						fmt.Println("len(steps)", len(steps), "steps", steps)
+						fmt.Println(" len(steps)", len(steps), "steps", steps)
 
-						if len(steps) == 1 { // Si llegamos al final de la ruta
-							fmt.Println("Folder found======")
-							return folder.B_inodo // Retornar índice del inodo encontrado
-						} else { // Si aún hay más niveles en la ruta, seguir buscando
-							fmt.Println("NextInode======")
+						if len(steps) == 1 {
+							fmt.Println(" ═══ Folder found ═══ ")
+							return folder.B_inodo
+						} else {
+							fmt.Println(" ═══ NextInode ═══ ")
 							var NextInode Partitions.Inode
 
 							// Leer el siguiente inodo desde el archivo binario
@@ -220,12 +218,12 @@ func SearchInodeByPath(steps []string, inode Partitions.Inode, file *os.File, su
 					}
 				}
 			} else {
-				fmt.Println("Manejo de bloques indirectos no implementado") // Falta implementar acceso a bloques indirectos
+				fmt.Println("Manejo de bloques indirectos no implementado")
 			}
 		}
-		index++ // Incrementar índice para saber si son bloques directos o indirectos
+		index++
 	}
 
-	fmt.Println("======End BUSQUEDA INODO POR PATH======")
-	return -1 // Si no se encontró, retornar -1
+	fmt.Println(" ════════════════   BUSQUEDA FINALIZADA   ═════════════════════ ")
+	return -1
 }

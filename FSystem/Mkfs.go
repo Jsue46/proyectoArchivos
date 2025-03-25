@@ -3,18 +3,20 @@ package FSystem
 import (
 	"Proyecto/Environment"
 	"Proyecto/Partitions"
+	"Proyecto/User_Groups"
 	"Proyecto/Utils"
 	"encoding/binary"
 	"fmt"
+	"os"
 	"strings"
 	"time"
 )
 
 func Mkfs(id string, type_ string, fs_ string) {
-	fmt.Println("======INICIO MKFS======")
-	fmt.Println("Id:", id)
-	fmt.Println("Type:", type_)
-	fmt.Println("Fs:", fs_)
+	fmt.Println("╔═════════════════════ INICIO MKFS   ══════════════════════════╗")
+	fmt.Println("  Id:", id)
+	fmt.Println("  Type:", type_)
+	fmt.Println("  Fs:", fs_)
 
 	// Obtener la fecha actual en formato día/mes/año
 	currentDate := time.Now().Format("02/01/2006")
@@ -118,5 +120,31 @@ func Mkfs(id string, type_ string, fs_ string) {
 
 	defer file.Close()
 
-	fmt.Println("======FIN MKFS======")
+	fmt.Println("╚══════════════════════   FIN MKFS   ══════════════════════════╝")
+}
+
+// Función para leer y mostrar el contenido de users.txt
+func PrintUsersTxt(file *os.File, tempSuperblock Partitions.Superblock) {
+	fmt.Println("======Contenido de users.txt======")
+
+	// Buscar el archivo "users.txt" en el sistema de archivos
+	indexInode := User_Groups.InitSearch("/users.txt", file, tempSuperblock)
+	if indexInode == -1 {
+		fmt.Println("Error: No se encontró el archivo users.txt.")
+		return
+	}
+
+	// Leer el inodo del archivo "users.txt"
+	var crrInode Partitions.Inode
+	if err := Utils.LeerArchivo(file, &crrInode, int64(tempSuperblock.S_inode_start+indexInode*int32(binary.Size(Partitions.Inode{})))); err != nil {
+		fmt.Println("Error al leer el inodo de users.txt:", err)
+		return
+	}
+
+	// Obtener el contenido del archivo "users.txt"
+	data := GetInodeFileData(crrInode, file, tempSuperblock)
+
+	// Mostrar el contenido de users.txt
+	fmt.Println(data)
+	fmt.Println("======Fin del contenido de users.txt======")
 }

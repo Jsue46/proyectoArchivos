@@ -11,8 +11,8 @@ import (
 )
 
 func Mkdisk(size int, fit string, unit string, path string) {
-	fmt.Println("======INICIO MKDISK======")
-	fmt.Printf("Size: %d\nFit: %s\nUnit: %s\nPath: %s\n", size, fit, unit, path)
+	fmt.Println("╔═════════════════════ INICIO MKDISK  ═════════════════════════╗")
+	fmt.Printf("  Size: %d\n  Fit: %s\n  Unit: %s\n  Path: %s\n", size, fit, unit, path)
 
 	// Valores por defecto para parámetros opcionales
 	if fit == "" {
@@ -60,10 +60,10 @@ func Mkdisk(size int, fit string, unit string, path string) {
 		fmt.Println("Error al abrir archivo:", err.Error())
 		return
 	}
-	defer file.Close() // Cerrar archivo al salir de la función
+	defer file.Close()
 
-	// Escribir ceros en el archivo (creando el espacio del disco)
-	zeroBlock := make([]byte, sizeInBytes) // Crea un bloque de ceros del tamaño del disco
+	// Escribir ceros en el archivo
+	zeroBlock := make([]byte, sizeInBytes)
 	if _, err := file.Write(zeroBlock); err != nil {
 		fmt.Println("Error al escribir en el archivo:", err.Error())
 		return
@@ -75,7 +75,7 @@ func Mkdisk(size int, fit string, unit string, path string) {
 	nuevoMBR.MbrDskSignature = rand.Int31()
 	copy(nuevoMBR.DskFit[:], fit)
 
-	formattedDate := time.Now().Format("02/01/2006 - 15:04")
+	formattedDate := time.Now().Format("15:04 - 02/01/2006")
 	copy(nuevoMBR.MbrFechaCreacion[:], formattedDate)
 
 	// Escribir el MBR en el archivo
@@ -93,6 +93,5 @@ func Mkdisk(size int, fit string, unit string, path string) {
 
 	// Imprimir el MBR leído
 	Partitions.ImprimirMBR(tempMBR)
-
-	fmt.Println("======FIN MKDISK======")
+	fmt.Println("╚═════════════════════   FIN MKDISK   ═════════════════════════╝")
 }

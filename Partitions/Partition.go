@@ -15,7 +15,8 @@ type MBR struct {
 
 // Función para imprimir un MBR
 func ImprimirMBR(data MBR) {
-	fmt.Printf("MbrFechaCreacion: %s, DskFit: %s, Tamaño: %d, MbrDskSignature: %d\n",
+	fmt.Println("")
+	fmt.Printf("  Fecha de Creacion: %s, Fit: %s, Tamaño: %d, Signature: %d\n",
 		string(data.MbrFechaCreacion[:]),
 		string(data.DskFit[:]),
 		data.MbrTamanio,
@@ -39,8 +40,7 @@ type Partition struct {
 
 // Función para imprimir una partición
 func ImprimirPartition(data Partition) {
-	fmt.Printf(
-		"Name: %s, type: %s, start: %d, size: %d, status: %s, id: %s\n",
+	fmt.Printf("   Name: %s, Type: %s, Start: %d, Size: %d, Status: %s, Id: %s\n",
 		string(data.PartName[:]), string(data.PartType[:]), data.PartStart, data.PartSize,
 		string(data.PartStatus[:]), string(data.PartID[:]))
 }
@@ -57,7 +57,7 @@ type EBR struct {
 
 // Función para imprimir un EBR
 func ImrprimirEBR(data EBR) {
-	fmt.Printf("Name: %s, fit: %c, start: %d, size: %d, next: %d, mount: %c\n",
+	fmt.Printf("   Name: %s, Fit: %c, Start: %d, Size: %d, Next: %d, Mount: %c\n",
 		string(data.PartName[:]),
 		data.PartFit,
 		data.PartStart,
@@ -87,28 +87,31 @@ type Superblock struct {
 	S_block_start       int32
 }
 
+// Función para imprimir un superbloque
 func PrintSuperblock(sb Superblock) {
-	fmt.Println("====== Superblock ======")
-	fmt.Printf("S_filesystem_type: %d\n", sb.S_filesystem_type)
-	fmt.Printf("S_inodes_count: %d\n", sb.S_inodes_count)
-	fmt.Printf("S_blocks_count: %d\n", sb.S_blocks_count)
-	fmt.Printf("S_free_blocks_count: %d\n", sb.S_free_blocks_count)
-	fmt.Printf("S_free_inodes_count: %d\n", sb.S_free_inodes_count)
-	fmt.Printf("S_mtime: %s\n", string(sb.S_mtime[:]))
-	fmt.Printf("S_umtime: %s\n", string(sb.S_umtime[:]))
-	fmt.Printf("S_mnt_count: %d\n", sb.S_mnt_count)
-	fmt.Printf("S_magic: 0x%X\n", sb.S_magic)
-	fmt.Printf("S_inode_size: %d\n", sb.S_inode_size)
-	fmt.Printf("S_block_size: %d\n", sb.S_block_size)
-	fmt.Printf("S_fist_ino: %d\n", sb.S_fist_ino)
-	fmt.Printf("S_first_blo: %d\n", sb.S_first_blo)
-	fmt.Printf("S_bm_inode_start: %d\n", sb.S_bm_inode_start)
-	fmt.Printf("S_bm_block_start: %d\n", sb.S_bm_block_start)
-	fmt.Printf("S_inode_start: %d\n", sb.S_inode_start)
-	fmt.Printf("S_block_start: %d\n", sb.S_block_start)
-	fmt.Println("========================")
+	fmt.Println(" ═════════════════════  SUPERBLOCK   ══════════════════════════ ")
+	fmt.Printf(" S_filesystem_type: %d\n", sb.S_filesystem_type)
+	fmt.Printf(" S_inodes_count: %d\n", sb.S_inodes_count)
+	fmt.Printf(" S_blocks_count: %d\n", sb.S_blocks_count)
+	fmt.Printf(" S_free_blocks_count: %d\n", sb.S_free_blocks_count)
+	fmt.Printf(" S_free_inodes_count: %d\n", sb.S_free_inodes_count)
+	fmt.Printf(" S_mtime: %s\n", string(sb.S_mtime[:]))
+	fmt.Printf(" S_umtime: %s\n", string(sb.S_umtime[:]))
+	fmt.Printf(" S_mnt_count: %d\n", sb.S_mnt_count)
+	fmt.Printf(" S_magic: 0x%X\n", sb.S_magic)
+	fmt.Printf(" S_inode_size: %d\n", sb.S_inode_size)
+	fmt.Printf(" S_block_size: %d\n", sb.S_block_size)
+	fmt.Printf(" S_fist_ino: %d\n", sb.S_fist_ino)
+	fmt.Printf(" S_first_blo: %d\n", sb.S_first_blo)
+	fmt.Printf(" S_bm_inode_start: %d\n", sb.S_bm_inode_start)
+	fmt.Printf(" S_bm_block_start: %d\n", sb.S_bm_block_start)
+	fmt.Printf(" S_inode_start: %d\n", sb.S_inode_start)
+	fmt.Printf(" S_block_start: %d\n", sb.S_block_start)
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
+
 }
 
+// Definición de la estructura de un inodo
 type Inode struct {
 	I_uid   int32
 	I_gid   int32
@@ -121,55 +124,63 @@ type Inode struct {
 	I_perm  [3]byte
 }
 
+// Función para imprimir un inodo
 func PrintInode(inode Inode) {
-	fmt.Println("====== Inode ======")
-	fmt.Printf("I_uid: %d\n", inode.I_uid)
-	fmt.Printf("I_gid: %d\n", inode.I_gid)
-	fmt.Printf("I_size: %d\n", inode.I_size)
-	fmt.Printf("I_atime: %s\n", string(inode.I_atime[:]))
-	fmt.Printf("I_ctime: %s\n", string(inode.I_ctime[:]))
-	fmt.Printf("I_mtime: %s\n", string(inode.I_mtime[:]))
-	fmt.Printf("I_type: %s\n", string(inode.I_type[:]))
-	fmt.Printf("I_perm: %s\n", string(inode.I_perm[:]))
-	fmt.Printf("I_block: %v\n", inode.I_block)
-	fmt.Println("===================")
+	fmt.Println(" ════════════════════════  INODO  ═════════════════════════════ ")
+	fmt.Printf(" I_uid: %d\n", inode.I_uid)
+	fmt.Printf(" I_gid: %d\n", inode.I_gid)
+	fmt.Printf(" I_size: %d\n", inode.I_size)
+	fmt.Printf(" I_atime: %s\n", string(inode.I_atime[:]))
+	fmt.Printf(" I_ctime: %s\n", string(inode.I_ctime[:]))
+	fmt.Printf(" I_mtime: %s\n", string(inode.I_mtime[:]))
+	fmt.Printf(" I_type: %s\n", string(inode.I_type[:]))
+	fmt.Printf(" I_perm: %s\n", string(inode.I_perm[:]))
+	fmt.Printf(" I_block: %v\n", inode.I_block)
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
 }
 
+// Definición de la estructura de un bloque de carpetas
 type Folderblock struct {
 	B_content [4]Content
 }
 
+// Función para imprimir un bloque de carpetas
 func PrintFolderblock(folderblock Folderblock) {
-	fmt.Println("====== Folderblock ======")
+	fmt.Println(" ═════════════════════  FOLDERBLOCK ═══════════════════════════ ")
 	for i, content := range folderblock.B_content {
-		fmt.Printf("Content %d: Name: %s, Inodo: %d\n", i, string(content.B_name[:]), content.B_inodo)
+		fmt.Printf(" Contenido %d: Name: %s, Inodo: %d\n", i, string(content.B_name[:]), content.B_inodo)
 	}
-	fmt.Println("=========================")
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
 }
 
+// Definición de la estructura de un bloque de archivos
 type Content struct {
-	B_name  [12]byte //Este campo almacena el nombre de un archivo o carpeta
-	B_inodo int32    //Se utiliza un arreglo de bytes ([12]byte) para asegurar que el nombre tenga un tamaño fijo y sea fácil de manejar
+	B_name  [12]byte
+	B_inodo int32
 }
 
+// Definición de la estructura de un bloque de archivos
 type Fileblock struct {
 	B_content [64]byte
 }
 
+// Función para imprimir un bloque de archivos
 func PrintFileblock(fileblock Fileblock) {
-	fmt.Println("====== Fileblock ======")
-	fmt.Printf("B_content: %s\n", string(fileblock.B_content[:]))
-	fmt.Println("=======================")
+	fmt.Println(" ══════════════════════  FILEBLOCK ════════════════════════════ ")
+	fmt.Printf(" B_content: %s\n", string(fileblock.B_content[:]))
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
 }
 
+// Definición de la estructura de un bloque de apuntadores
 type Pointerblock struct {
 	B_pointers [16]int32
 }
 
+// Función para imprimir un bloque de apuntadores
 func PrintPointerblock(pointerblock Pointerblock) {
-	fmt.Println("====== Pointerblock ======")
+	fmt.Println(" ═════════════════════  POINTERBLOCK ══════════════════════════ ")
 	for i, pointer := range pointerblock.B_pointers {
-		fmt.Printf("Pointer %d: %d\n", i, pointer)
+		fmt.Printf(" Pointer %d: %d\n", i, pointer)
 	}
-	fmt.Println("=========================")
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
 }

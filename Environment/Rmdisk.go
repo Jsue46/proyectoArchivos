@@ -7,7 +7,7 @@ import (
 
 // Rmdisk elimina un archivo de disco en la ruta especificada
 func Rmdisk(path string) {
-	// Verificar si el archivo existe
+	fmt.Println("╔═════════════════════ INICIO RMDISK  ═════════════════════════╗")
 	if _, err := os.Stat(path); os.IsNotExist(err) {
 		fmt.Printf("Error: El archivo no existe en la ruta especificada: %s\n", path)
 		return
@@ -20,5 +20,8 @@ func Rmdisk(path string) {
 		return
 	}
 
-	fmt.Printf("Disco en la ruta %s eliminado correctamente.\n", path)
+	fmt.Printf("  Disco En la Ruta %s .\n", path)
+	fmt.Printf("    Ha Siso Eliminado Correctamente.\n")
+
+	fmt.Println("╚═════════════════════   FIN RMDISK   ═════════════════════════╝")
 }

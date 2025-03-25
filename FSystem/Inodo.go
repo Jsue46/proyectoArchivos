@@ -25,7 +25,8 @@ func initInode(inode *Partitions.Inode, date string) {
 
 // GetInodeFileData lee el contenido de un archivo a partir de su inodo.
 func GetInodeFileData(inode Partitions.Inode, file *os.File, superblock Partitions.Superblock) string {
-	fmt.Println("======Start CONTENIDO DEL BLOQUE======")
+	fmt.Println(" ═══════════════   CONTENIDO DEL BLOQUE   ═════════════════════ ")
+
 	index := int32(0)
 	var content string
 
@@ -50,20 +51,20 @@ func GetInodeFileData(inode Partitions.Inode, file *os.File, superblock Partitio
 		index++
 	}
 
-	fmt.Println("======End CONTENIDO DEL BLOQUE======")
+	fmt.Println(" ═══════════════  FIN CONTENIDO DEL BLOQUE  ════════════════════ ")
 	return content
 }
 
 func PrintInode(inode Partitions.Inode) {
-	fmt.Println("====== Inode ======")
-	fmt.Printf("I_uid: %d\n", inode.I_uid)
-	fmt.Printf("I_gid: %d\n", inode.I_gid)
-	fmt.Printf("I_size: %d\n", inode.I_size)
-	fmt.Printf("I_atime: %s\n", string(inode.I_atime[:]))
-	fmt.Printf("I_ctime: %s\n", string(inode.I_ctime[:]))
-	fmt.Printf("I_mtime: %s\n", string(inode.I_mtime[:]))
-	fmt.Printf("I_type: %s\n", string(inode.I_type[:]))
-	fmt.Printf("I_perm: %s\n", string(inode.I_perm[:]))
-	fmt.Printf("I_block: %v\n", inode.I_block)
-	fmt.Println("===================")
+	fmt.Println(" ═══════════════════════   INODE   ════════════════════════════ ")
+	fmt.Printf(" I_uid: %d\n", inode.I_uid)
+	fmt.Printf(" I_gid: %d\n", inode.I_gid)
+	fmt.Printf(" I_size: %d\n", inode.I_size)
+	fmt.Printf(" I_atime: %s\n", string(inode.I_atime[:]))
+	fmt.Printf(" I_ctime: %s\n", string(inode.I_ctime[:]))
+	fmt.Printf(" I_mtime: %s\n", string(inode.I_mtime[:]))
+	fmt.Printf(" I_type: %s\n", string(inode.I_type[:]))
+	fmt.Printf(" I_perm: %s\n", string(inode.I_perm[:]))
+	fmt.Printf(" I_block: %v\n", inode.I_block)
+	fmt.Println(" ══════════════════════════════════════════════════════════════ ")
 }

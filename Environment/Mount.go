@@ -9,6 +9,7 @@ import (
 )
 
 func Mount(path string, name string) {
+	fmt.Println("╔══════════════════════ INICIO MOUT  ══════════════════════════╗")
 	file, err := Utils.AbrirArchivo(path)
 	if err != nil {
 		fmt.Println("Error: No se pudo abrir el archivo en la ruta:", path)
@@ -22,7 +23,7 @@ func Mount(path string, name string) {
 		return
 	}
 
-	fmt.Printf("Buscando partición con nombre: '%s'\n", name)
+	fmt.Printf("  Buscando partición con nombre: '%s'\n", name)
 
 	partitionFound := false
 	var partition Partitions.Partition
@@ -52,7 +53,7 @@ func Mount(path string, name string) {
 		return
 	}
 
-	fmt.Printf("Partición encontrada: '%s' en posición %d\n", string(partition.PartName[:]), partitionIndex+1)
+	fmt.Printf("  Partición encontrada: '%s' en posición %d\n", string(partition.PartName[:]), partitionIndex+1)
 
 	// Generar el ID de la partición utilizando la función `generateDiskID`
 	diskID := generateDiskID(path)
@@ -96,12 +97,14 @@ func Mount(path string, name string) {
 	}
 
 	// Imprimir el mensaje confirmando que la partición ha sido montada, junto con su ID.
-	fmt.Printf("Partición montada con ID: %s\n", partitionID)
+	fmt.Printf("  Partición montada con ID: %s\n", partitionID)
 	fmt.Println("")
-	fmt.Println("MBR actualizado:")
+	fmt.Println("  MBR actualizado:")
 	Partitions.ImprimirMBR(TempMBR)
 	fmt.Println("")
 	ImprimirMountedPartitions()
+
+	fmt.Println("╚══════════════════════   FIN MOUNT   ═════════════════════════╝")
 }
 
 func getLastDiskID() string {

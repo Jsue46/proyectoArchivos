@@ -16,11 +16,11 @@ type MountedPartition struct {
 }
 
 func ImprimirMountedPartitions() {
-	fmt.Println("Particiones montadas:")
+	fmt.Println("  Particiones Montadas:")
 
 	// Si no hay particiones montadas, muestra un mensaje y termina la función.
 	if len(mountedPartitions) == 0 {
-		fmt.Println("No hay particiones montadas.")
+		fmt.Println("No hay Particiones Montadas.")
 		return
 	}
 
@@ -34,7 +34,7 @@ func ImprimirMountedPartitions() {
 				loginStatus = "Sí"
 			}
 			// Imprime los detalles de la partición.
-			fmt.Printf(" - Partición Name: %s, ID: %s, Path: %s, Status: %c, LoggedIn: %s\n",
+			fmt.Printf("  - Partición Name: %s, ID: %s, Path: %s, Status: %c, LoggedIn: %s\n",
 				partition.MountName, partition.MountID, partition.MountPath, partition.MountStatus, loginStatus)
 		}
 	}
@@ -46,37 +46,50 @@ func GetMountedPartitions() map[string][]MountedPartition {
 	return mountedPartitions
 }
 
-// MarkPartitionAsLoggedIn busca una partición por su ID y la marca como logueada (LoggedIn = true).
-func MarkPartitionAsLoggedIn(id string) {
-	// Recorre todas las particiones montadas en los discos.
+// Función para marcar una partición con inicio de sesión
+func ParticionConInicioSesion(id string) {
 	for diskID, partitions := range mountedPartitions {
 		for i, partition := range partitions {
-			// Si la partición coincide con el ID buscado, se marca como logueada.
+			// Si la partición coincide con el ID buscado, se inicia sesión.
 			if partition.MountID == id {
 				mountedPartitions[diskID][i].LoggedIn = true
-				fmt.Printf("Partición con ID %s marcada como logueada.\n", id)
+				fmt.Printf("\t Partición con ID %s encontrada.\n", id)
+				fmt.Println("\t Inicio de sesión exitoso.")
 				return
 			}
 		}
 	}
 	// Si no se encuentra la partición, se muestra un mensaje de error.
-	fmt.Printf("No se encontró la partición con ID %s para marcarla como logueada.\n", id)
+	fmt.Printf("No se encontró la partición con ID %s para marcarla con Inicio de Sesión.\n", id)
 }
 
-func MarkPartitionAsLoggedOut(id string) {
+// Función para marcar una partición como sin sesión iniciada
+func ParticionSinInicioSesion(id string) {
 	mountedPartitions := GetMountedPartitions()
 
-	// Buscar la partición por su ID y marcar como deslogueada
+	// Buscar la partición por su ID y marcar como sin sesión iniciada
 	for _, partitions := range mountedPartitions {
 		for i, partition := range partitions {
 			if partition.MountID == id {
 				partitions[i].LoggedIn = false
-				fmt.Printf("Partición con ID %s deslogueada correctamente.\n", id)
+				fmt.Printf("Partición con ID %s marcada como sin inicio de sesión.\n", id)
 				return
 			}
 		}
 	}
 
 	// Si no se encuentra la partición, mostrar un mensaje
-	fmt.Printf("No se encontró la partición con ID %s para desloguearla.\n", id)
+	fmt.Printf("No se encontró la partición con ID %s para marcarla como sin inicio de sesión.\n", id)
+}
+
+// Función para obtener la partición montada actualmente
+func GetCurrentMountedPartition() *MountedPartition {
+	for _, partitions := range mountedPartitions {
+		for _, partition := range partitions {
+			if partition.LoggedIn {
+				return &partition
+			}
+		}
+	}
+	return nil
 }

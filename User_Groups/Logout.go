@@ -5,12 +5,11 @@ import (
 	"fmt"
 )
 
+// Función para cerrar sesión
 func Logout() {
-	fmt.Println("======Start LOGOUT======")
-
+	fmt.Println("╔═════════════════════ CERRAR  SESION ═════════════════════════╗")
 	// Obtener las particiones montadas
 	mountedPartitions := Environment.GetMountedPartitions()
-
 	// Variable para verificar si hay una sesión activa
 	var sessionFound bool = false
 
@@ -19,7 +18,7 @@ func Logout() {
 		for _, partition := range partitions {
 			if partition.LoggedIn {
 				// Marcar la partición como deslogueada
-				Environment.MarkPartitionAsLoggedOut(partition.MountID)
+				Environment.ParticionSinInicioSesion(partition.MountID)
 				sessionFound = true
 				break
 			}
@@ -31,10 +30,10 @@ func Logout() {
 
 	// Si no se encontró una sesión activa, mostrar un error
 	if !sessionFound {
-		fmt.Println("Error: No hay una sesión activa para cerrar.")
+		fmt.Println("  Error: No hay una Sesión Activa para Cerrar.")
 	} else {
-		fmt.Println("Sesión cerrada con éxito.")
+		fmt.Println("\t Sesión Finalizada  con éxito.")
 	}
 
-	fmt.Println("======End LOGOUT======")
+	fmt.Println("╚═══════════════════   CERRANDO SESION  ═══════════════════════╝")
 }
